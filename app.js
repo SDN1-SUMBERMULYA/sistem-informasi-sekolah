@@ -140,7 +140,7 @@ function showApp(nama, role) {
         loadSiswaBelumAbsen();
     });
     bukaSetting();
-    loadJumlahStatus();
+    //loadJumlahStatus();
 
     document.getElementById('loader').classList.add('hidden');
     
@@ -504,6 +504,7 @@ async function getSemuaSiswa(kelas, callback) {
         }
     } catch(err) {
         showToast('Gagal mengambil data siswa.', 'error');
+        console.log(err);
     }
     document.getElementById('loadtabel').classList.add('hidden');
 }
