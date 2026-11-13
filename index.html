@@ -1,120 +1,807 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Absensi QR - SD Negeri 1 Sumber Mulya</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Library QR Scanner -->
-  <script src="https://unpkg.com/html5-qrcode"></script>
-  <!-- Konfigurasi Tailwind Custom (Tema Hijau) -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            excel: {
-              800: '#1e7e34', // Hijau tua solid
-              900: '#145c23', // Hijau sangat tua
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Absensi Sekolah QR Code</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- CSS DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+    <!-- JS DataTables -->
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+    <!-- Phosphor Icons for modern iconography -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Custom configuration for Tailwind if needed -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        green: {
+                            900: '#14532d', // Defining specifically as requested
+                            800: '#166534',
+                            950: '#052e16',
+                        }
+                    }
+                }
             }
-          }
         }
-      }
-    }
-  </script>
-</head>
-<body class="bg-gray-100 min-h-screen font-sans">
-
-  <!-- ================= NOTIFIKASI ================= -->
-  <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 hidden transition-opacity duration-300">
-    <div id="toast-message" class="px-6 py-3 rounded-lg shadow-lg text-white font-semibold"></div>
-  </div>
-
-  <!-- ================= HALAMAN LOGIN ================= -->
-  <div id="login-page" class="min-h-screen flex items-center justify-center bg-gray-200">
-    <div class="bg-white p-8 rounded-xl shadow-xl w-full max-w-md border-t-8 border-excel-800">
-      <div class="text-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Portal Absensi</h1>
-        <p class="text-sm text-gray-500">SD Negeri 1 Sumber Mulya</p>
-      </div>
-      <form id="login-form" class="space-y-5">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Username</label>
-          <input type="text" id="username" class="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-excel-800 focus:border-excel-800" required>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Password</label>
-          <input type="password" id="password" class="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:ring-excel-800 focus:border-excel-800" required>
-        </div>
-        <button type="submit" id="btn-login" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-excel-800 hover:bg-excel-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-excel-800 transition">
-          Masuk
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- ================= HALAMAN UTAMA (DASHBOARD & SCANNER) ================= -->
-  <div id="main-page" class="hidden min-h-screen flex flex-col">
-    <!-- Navbar -->
-    <nav class="bg-excel-800 text-white shadow-md">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
-          <div class="flex-shrink-0 flex items-center gap-2">
-            <span class="font-bold text-lg tracking-wide">Absensi<span class="font-light">QR</span></span>
-          </div>
-          <div class="flex items-center gap-4">
-            <span id="user-info" class="text-sm hidden sm:block font-medium"></span>
-            <button onclick="logout()" class="text-sm bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded transition">Keluar</button>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Content -->
-    <main class="flex-grow w-full max-w-4xl mx-auto p-4 sm:p-6">
-      
-      <!-- Panel Scanner -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-          <h2 class="text-lg font-bold text-gray-700">Scanner QR Siswa</h2>
-          <button id="btn-toggle-cam" onclick="toggleScanner()" class="px-4 py-2 bg-excel-800 text-white text-sm font-medium rounded shadow hover:bg-excel-900 transition">
-            Mulai Scan
-          </button>
-        </div>
+    </script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #14532d; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #50C878; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00A550; 
+        }
         
-        <div class="p-6">
-          <div id="reader-container" class="hidden mx-auto w-full max-w-md overflow-hidden rounded-lg border-2 border-dashed border-gray-300">
-            <div id="reader"></div>
-          </div>
-          
-          <!-- Area Hasil Scan Terakhir -->
-          <div id="scan-result" class="mt-6 hidden">
-            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-r shadow-sm">
-              <div class="flex">
-                <div class="flex-shrink-0">
-                  <svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div class="ml-3">
-                  <h3 class="text-lg font-medium text-green-800">Berhasil Absen!</h3>
-                  <div class="mt-2 text-sm text-green-700">
-                    <p>Nama: <span id="res-nama" class="font-bold"></span></p>
-                    <p>Kelas: <span id="res-kelas" class="font-bold"></span></p>
-                    <p>Status: <span id="res-status" class="font-bold px-2 py-0.5 rounded text-white mt-1 inline-block"></span></p>
-                    <p class="text-xs mt-1 text-green-600">Jam: <span id="res-jam"></span></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        /* Animasi Kustom Loading Screen */
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        .id-card {
+              background-image: url('https://sdn1-sumbermulya.github.io/images/bg_kartu.jpg');
+              background-size: cover;
+              background-position: center;
+          }
+      </style>
+</head>
 
+<body class="bg-gray-100 font-sans text-gray-900">
+    <!-- Loading Screen -->
+    <div id="loader" class="fixed inset-0 flex flex-col items-center justify-center bg-slate-900 z-[60] transition-opacity duration-500">
+        <div class="w-24 h-24 rounded-full bg-green-500 flex items-center justify-center animate-pulse[animation-duration:0.9s] shadow-2xl">
+            <i class="ph-fill ph-qr-code text-7xl text-green-900"></i>
         </div>
-      </div>
-
-    </main>
-  </div>
-
+        <div class="mt-8 w-64 h-2 bg-green-500 rounded-full overflow-hidden">
+            <div class="h-full w-full rounded-full bg-gradient-to-r from-green-500 via-green-300 to-green-500 bg-[length:200%_100%] animate-[loading_1.7s_linear_infinite]">
+            </div>
+        </div>
+    </div>
+    <!-- Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative z-50 bg-gray-100 hidden">
+        <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
+            <div>
+                <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="ph-fill ph-qr-code text-3xl text-green-900"></i>
+                </div>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    AbsensiQR
+                </h2>
+                <p class="mt-2 text-center text-sm text-gray-600">
+                    Masuk ke dashboard Anda
+                </p>
+            </div>
+            <div class="mt-8 space-y-6">
+                <div class="rounded-md shadow-sm space-y-4">
+                    <div>
+                        <div class="sr-only">Username</div>
+                        <input id="namauser" name="namauser" type="text" required class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-900 focus:border-green-900 focus:z-10 sm:text-sm" placeholder="Username">
+                    </div>
+                    <div>
+                        <div class="sr-only">Password</div>
+                        <input id="passuser" name="passuser" type="password" required class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-900 focus:border-green-900 focus:z-10 sm:text-sm" placeholder="Password">
+                    </div>
+                </div>
+                <div>
+                    <button id="login-btn" onclick="handleLogin()" class="w-full flex justify-center py-1 px-4 border border-transparent font-medium rounded-lg text-white bg-green-900 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-900 transition-colors shadow-sm">
+                        <i id="login-icon" class="ph ph-sign-in text-lg mr-3"></i>
+                        <span id="login-text">Masuk Sekarang</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Dashboard Wrapper -->
+    <div id="dashboard-wrapper" class="w-full h-screen overflow-hidden hidden">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="bg-green-900 text-white w-64 flex-shrink-0 hidden md:flex flex-col transition-all duration-300 z-20 h-full fixed md:relative">
+            <!-- Logo Area -->
+            <div class="h-16 flex items-center px-6 border-b border-green-800">
+                <i class="ph-fill ph-qr-code text-2xl text-green-400 mr-3"></i>
+                <span class="text-xl font-bold tracking-wider">AbsensiQR</span>
+            </div>
+            <!-- Sidebar Navigation (Tabs) -->
+            <div class="flex-1 overflow-y-auto py-4" role="tablist" aria-label="Sidebar Navigation">
+                <nav class="space-y-1 px-3">
+                    <!-- Tab: Dashboard -->
+                    <button role="tab" aria-selected="false" aria-controls="panel-dashboard" id="tab-dashboard" class="tab-btn w-full flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-colors bg-green-800 hover:border-green-700 hover:bg-green-800 hover:text-white text-green-100 border-l-4 border-green-400 shadow-sm">
+                        <i class="ph ph-gauge text-xl mr-3"></i>Beranda
+                    </button>
+                    <!-- Tab: Reports -->
+                    <button role="tab" aria-selected="false" aria-controls="panel-reports" id="tab-reports" class="tab-btn w-full flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-colors text-green-100 hover:bg-green-800 hover:text-white border-l-4 border-transparent hover:border-green-700">
+                        <i class="ph ph-barcode text-xl mr-3"></i>Scan QR Absensi
+                    </button>
+                    <button role="tab" aria-selected="false" aria-controls="panel-set" id="tab-set" class="tab-btn w-full flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-colors text-green-100 hover:bg-green-800 hover:text-white border-l-4 border-transparent hover:border-green-700">
+                        <i class="ph ph-user-circle-check text-xl mr-3"></i>Absensi Manual
+                    </button>
+                    <!-- Tab: rekap -->
+                    <button role="tab" aria-selected="false" aria-controls="panel-rekap" id="tab-rekap" class="tab-btn w-full flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-colors text-green-100 hover:bg-green-800 hover:text-white border-l-4 border-transparent hover:border-green-700">
+                        <i class="ph ph-chart-line text-xl mr-3"></i>Rekap Absensi
+                    </button>
+                    <!-- Tab: Users -->
+                    <button role="tab" aria-selected="false" aria-controls="panel-users" id="tab-users" class="tab-btn w-full flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-colors text-green-100 hover:bg-green-800 hover:text-white border-l-4 border-transparent hover:border-green-700">
+                        <i class="ph ph-users-three text-xl mr-3"></i>Data Siswa
+                    </button>
+                    <!-- Tab: Settings -->
+                    <button role="tab" aria-selected="false" aria-controls="panel-settings" id="tab-settings" class="tab-btn w-full flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-colors text-green-100 hover:bg-green-800 hover:text-white border-l-4 border-transparent hover:border-green-700">
+                        <i class="ph ph-gear text-xl mr-3"></i>Pengaturan
+                    </button>
+                </nav>
+            </div>
+            <!-- User Profile (Bottom Sidebar) -->
+            <div class="border-t border-green-800 p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-green-700 text-white flex items-center justify-center font-bold" id="user-avatar">XD</div>
+                        <div class="ml-3 capitalize">
+                            <p id="user-name-display" class="text-sm font-medium text-white">XD</p>
+                            <p id="user-role-display" class="text-xs text-green-300">XD</p>
+                        </div>
+                    </div>
+                    <!-- Tombol Keluar (Logout) -->
+                    <button onclick="showLogoutConfirm()" class="p-2 text-green-400 hover:text-red-600 hover:bg-green-800 rounded-lg transition-colors focus:outline-none" title="Logout">
+                        <i class="ph ph-power text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+        <!-- Overlay for mobile sidebar -->
+        <div id="mobile-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-10 hidden md:hidden" onclick="toggleSidebar()"></div>
+        <!-- Main Content Wrapper -->
+        <div class="flex-1 flex flex-col w-full h-screen overflow-hidden">
+            <!-- Top Header -->
+            <header class="h-16 bg-white shadow-sm flex items-center justify-between px-4 sm:px-6 z-10 relative">
+                <div class="flex items-center">
+                    <!-- Mobile menu button -->
+                    <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-900">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                    <div class="hidden md:flex flex-col ml-2">
+                        <span class="text-xl font-bold text-gray-800" id="header-title">Beranda Overview</span>
+                        <span class="text-xs text-gray-500" id="subheader">Selamat datang kembali!</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="border border-green-500 flex font-mono gap-1.5 items-center px-2 rounded-md text-[10px] text-green-800">
+                        <span class="animate-ping bg-green-500 h-1.5 rounded-full w-1.5"></span>
+                        <span>Online</span>
+                    </div>
+                </div>
+            </header>
+            <!-- Main Content (Tab Panels) -->
+            <main class="flex-1 relative overflow-y-auto focus:outline-none p-4 sm:p-6 lg:p-8 bg-gray-50">
+                <!-- PANEL 1: DASHBOARD -->
+                <div id="panel-dashboard" role="tabpanel" aria-labelledby="tab-dashboard" class="tab-panel fade-in">
+                    <!-- Stats Row -->
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-1 mb-8">
+                        <!-- Card 1 -->
+                        <div class="sm:col-span-2">
+                            <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
+                                <!-- Header -->
+                                <div class="bg-green-800 px-6 py-2">
+                                    <h2 class="text-lg font-bold text-white">
+                                        Informasi Sekolah
+                                    </h2>
+                                    <p class="text-sm text-green-100">
+                                        Data profil sekolah
+                                    </p>
+                                </div>
+                                <!-- Data -->
+                                <div class="divide-y divide-gray-100">
+                                    <!-- Nama Sekolah -->
+                                    <div class="grid grid-cols-1 gap-1 px-6 py-2 sm:grid-cols-3 sm:gap-4">
+                                        <div class="sm:flex justify-between font-semibold text-gray-600">
+                                            <span>Nama Sekolah</span>
+                                            <span class="sm:block hidden">:</span>
+                                        </div>
+                                        <div id="tnamaSekolah" class="sm:col-span-2 font-semibold text-gray-900">-</div>
+                                    </div>
+                                    <!-- NPSN -->
+                                    <div class="grid grid-cols-1 gap-1 px-6 py-2 sm:grid-cols-3 sm:gap-4">
+                                        <div class="sm:flex justify-between font-semibold text-gray-600">
+                                            <span>NPSN</span>
+                                            <span class="sm:block hidden">:</span>
+                                        </div>
+                                        <div id="tnpsn" class="sm:col-span-2 font-semibold text-gray-900">-</div>
+                                    </div>
+                                    <!-- Kepala Sekolah -->
+                                    <div class="grid grid-cols-1 gap-1 px-6 py-2 sm:grid-cols-3 sm:gap-4">
+                                        <div class="sm:flex justify-between font-semibold text-gray-600">
+                                            <span>Kepala Sekolah</span>
+                                            <span class="sm:block hidden">:</span>
+                                        </div>
+                                        <div id="tkepalaSekolah" class="sm:col-span-2 font-semibold text-gray-900">-</div>
+                                    </div>
+                                    <!-- NIP -->
+                                    <div class="grid grid-cols-1 gap-1 px-6 py-2 sm:grid-cols-3 sm:gap-4">
+                                        <div class="sm:flex justify-between font-semibold text-gray-600">
+                                            <span>NIP</span>
+                                            <span class="sm:block hidden">:</span>
+                                        </div>
+                                        <div id="tnip" class="sm:col-span-2 font-semibold text-gray-900">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 mb-8">
+                        <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
+                            <div class="px-6 py-5 border-b border-gray-200">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Jumlah Siswa Per Kelas</h3>
+                            </div>
+                            <canvas id="ChartJumlahSiswa"></canvas>
+                        </div>
+                        <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
+                            <div class="px-6 py-5 border-b border-gray-200">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Absensi Hari Ini</h3>
+                            </div>
+                            <div class="sm:!w-[250px] sm:!h-[250px] mx-auto my-2">
+                                <canvas id="chartAbsensi"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Recent Activity Section -->
+                    <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
+                        <div class="px-6 py-5 border-b border-gray-200">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">Aktivitas Terbaru</h3>
+                        </div>
+                        <ul class="divide-y divide-gray-200">
+                            <li class="px-6 py-4 hover:bg-gray-50 transition-colors">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="ph ph-user-plus text-green-900 text-lg"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">Budi Santoso mendaftar akun baru</p>
+                                        <p class="text-sm text-gray-500 truncate">2 menit yang lalu</p>
+                                    </div>
+                                    <div>
+                                        <button class="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 text-xs leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">Detail</button>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="px-6 py-4 hover:bg-gray-50 transition-colors">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                        <i class="ph ph-credit-card text-blue-700 text-lg"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">Pembayaran pesanan #INV-0012 berhasil</p>
+                                        <p class="text-sm text-gray-500 truncate">15 menit yang lalu</p>
+                                    </div>
+                                    <div>
+                                        <button class="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 text-xs leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">Detail</button>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="px-6 py-4 hover:bg-gray-50 transition-colors">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+                                        <i class="ph ph-shield-warning text-red-700 text-lg"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">Percobaan login gagal dari IP tidak dikenal</p>
+                                        <p class="text-sm text-gray-500 truncate">1 jam yang lalu</p>
+                                    </div>
+                                    <div>
+                                        <button class="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 text-xs leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">Detail</button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="bg-gray-50 px-6 py-3 border-t border-gray-200">
+                            <button id="coba" class="text-sm font-medium text-green-900 hover:text-green-700">Lihat semua aktivitas &rarr;</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- PANEL 2: USERS -->
+                <div id="panel-users" role="tabpanel" aria-labelledby="tab-users" class="tab-panel hidden fade-in">
+                    <div class="lg:flex items-center justify-between mb-6">
+                        <div class="mb-6">
+                            <h1 class="text-xl font-semibold text-gray-900">Kode QR Siswa</h1>
+                            <p class="mt-2 text-sm text-gray-700">Downloaad Kode QR Dan Kartu Pelajar Siswa.</p>
+                        </div>
+                        <div class="m-1 flex justify-between">
+                            <button id="tampilSemuaQR" type="button" onclick="tampilkanSemuaQR()" class="w-full inline-flex items-center justify-center rounded-lg border border-transparent bg-green-900 px-4 py-1 m-1 text-sm font-medium text-white shadow-sm hover:bg-green-800 focus:outline-none focus:ring-1 focus:ring-green-800 focus:ring-offset-1 sm:w-auto transition-colors">
+                                <i class="ph ph-identification-card mr-2 text-lg"></i>Tampilkan Kartu Identitas
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <div class="flex">
+                            <div class="relative mr-3">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="ph ph-magnifying-glass text-gray-400"></i>
+                                </div>
+                                <input id="cariSiswa" type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-green-900 focus:border-green-900 sm:text-sm transition-colors" placeholder="Cari Nama atau NISN...">
+                            </div>
+                            <select id="filter-kelas" class="block px-3 py-2 border border-gray-300 leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-green-900 focus:border-green-900 sm:text-sm transition-colors">
+                                <option value="">Semua Kelas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table id="dataSiswa" class="min-w-full divide-y divide-gray-300"></table>
+                            <div id="loadtabel" class="bg-gray-900 bg-opacity-10 duration-300 fixed flex inset-0 items-center justify-center mt-20 sm:top-[7rem] top-[11.2rem] transition-opacity z-[70] hidden">
+                                <div class="absolute flex flex-col items-center">
+                                    <div class="h-8 w-8 animate-spin rounded-full border-[10px] border-double border-green-900 border-t-transparent"></div>
+                                    <p class="text-green-900 text-xs font-bold">Memuat Data</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- PANEL 3: REPORTS -->
+                <div id="panel-reports" role="tabpanel" aria-labelledby="tab-reports" class="tab-panel hidden fade-in">
+                    <div class="bg-white shadow-sm rounded-xl border border-gray-100 px-3 py-8 text-center flex flex-col items-center justify-center">
+                        <i class="ph-duotone ph-qr-code text-8xl text-green-200 mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-900">Scan Kode QR Siswa</h3>
+                        <p class="mt-2 text-sm text-gray-500 max-w-lg mx-auto">Kamera tidak bisa diakses langsung di sini (batasan platform Apps Script). Klik tombol di bawah untuk membuka halaman scan<br>Anda tidak perlu login ulang.</p>
+                        <button onclick="openScanPage()" class="mt-6 inline-flex items-center px-4 py-2 border border-green-900 shadow-sm text-sm font-medium rounded-lg text-green-900 bg-white hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-900">
+                            <i class="ph ph-barcode mr-2"></i> Buka Halaman Scan
+                        </button>
+                    </div>
+                </div>
+                <!-- PANEL manual -->
+                <div id="panel-set" role="tabpanel" aria-labelledby="tab-set" class="tab-panel hidden fade-in">
+                    <div class="lg:flex items-center justify-between mb-6">
+                        <div class="mb-6">
+                            <h1 class="text-xl font-semibold text-gray-900">Input Absen Secara Manual</h1>
+                            <p class="mt-2 text-sm text-gray-700"></p>
+                        </div>
+                        <div class="m-1 flex justify-between">
+                            <button onclick="konfirmasiAlfaMassal()" id="btnAlfa" class="w-full inline-flex items-center justify-center rounded-lg border border-transparent bg-green-900 px-4 py-1 m-1 text-sm font-medium text-white shadow-sm hover:bg-green-800 focus:outline-none focus:ring-1 focus:ring-green-800 focus:ring-offset-1 sm:w-auto transition-colors">
+                                <i class="ph ph-empty mr-2 text-lg"></i>Tandai Semua Sebagai Alpa
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <div class="flex">
+                            <div class="relative mr-3">
+                                <input id="manual-tanggal" type="date" class="block w-full p-3 py-2 border border-gray-300 leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-green-900 focus:border-green-900 sm:text-sm transition-colors">
+                            </div>
+                            <select id="filterManual" class="block px-3 py-2 border border-gray-300 leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-green-900 focus:border-green-900 sm:text-sm transition-colors">
+                                <option value="">Semua Kelas</option>
+                            </select>
+                            <div class="relative ml-3">
+                                <button id="btnfilter" type="button" class="bg-green-900 border border-transparent focus:outline-none focus:ring-1 focus:ring-green-800 focus:ring-offset-1 font-medium hover:bg-green-800 inline-flex items-center justify-center px-2 py-2 rounded-lg shadow-sm sm:w-auto text-sm text-white transition-colors w-full">
+                                    <i class="ph ph-funnel mr-2"></i>Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table id="dataManual" class="min-w-full divide-y divide-gray-300"></table>
+                            <div id="loadmanual" class="bg-gray-900 bg-opacity-10 duration-300 fixed flex inset-0 items-center justify-center mt-7 sm:top-[7rem] top-[11.2rem] transition-opacity z-[70] hidden">
+                                <div class="absolute flex flex-col items-center">
+                                    <div class="h-8 w-8 animate-spin rounded-full border-[10px] border-double border-green-900 border-t-transparent"></div>
+                                    <p class="text-green-900 text-xs font-bold">Memuat Data</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- PANEL 4: SETTINGS -->
+                <div id="panel-settings" role="tabpanel" aria-labelledby="tab-settings" class="tab-panel hidden fade-in">
+                    <div class="mb-6">
+                        <h1 class="text-xl font-semibold text-gray-900">Pengaturan Sistem</h1>
+                        <p class="mt-2 text-sm text-gray-700">Konfigurasikan preferensi dashboard dan pengaturan akun Anda.</p>
+                    </div>
+                    <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
+                        <div class="p-6 md:p-8">
+                            <div class="space-y-8 divide-y divide-gray-200">
+                                <!-- Section 1 -->
+                                <div class="space-y-6 sm:space-y-5">
+                                    <div>
+                                        <h3 class="text-lg leading-6 font-medium text-gray-900">Profil Sekolah</h3>
+                                        <p class="mt-1 max-w-2xl text-sm text-gray-500">Informasi ini akan ditampilkan ke publik pada invoice dan dokumen resmi.</p>
+                                    </div>
+                                    <div class="space-y-6 sm:space-y-5">
+                                        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                                            <div class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Nama Sekolah</div>
+                                            <div class="mt-1 sm:mt-0 sm:col-span-2">
+                                                <input type="text" name="namaSekolah" id="namaSekolah" class="block w-full max-w-lg rounded-md border border-gray-300 shadow-sm focus:border-green-900 focus:ring-green-900 sm:text-sm px-3 py-2">
+                                            </div>
+                                        </div>
+                                        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                                            <div class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">NPSN</div>
+                                            <div class="mt-1 sm:mt-0 sm:col-span-2">
+                                                <input type="number" name="npsn" id="npsn" class="block w-full max-w-lg rounded-md border border-gray-300 shadow-sm focus:border-green-900 focus:ring-green-900 sm:text-sm px-3 py-2">
+                                            </div>
+                                        </div>
+                                        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                                            <div class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Kepala Sekolah</div>
+                                            <div class="mt-1 sm:mt-0 sm:col-span-2">
+                                                <input type="text" name="kepalaSekolah" id="kepalaSekolah" value="Nama Sekolah" class="block w-full max-w-lg rounded-md border border-gray-300 shadow-sm focus:border-green-900 focus:ring-green-900 sm:text-sm px-3 py-2">
+                                            </div>
+                                        </div>
+                                        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                                            <div class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">NIP</div>
+                                            <div class="mt-1 sm:mt-0 sm:col-span-2">
+                                                <input type="text" name="nip" id="nip" value="xxx" class="block w-full max-w-lg rounded-md border border-gray-300 shadow-sm focus:border-green-900 focus:ring-green-900 sm:text-sm px-3 py-2">
+                                            </div>
+                                        </div>
+                                        <!-- <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center sm:border-t sm:border-gray-200 sm:pt-5">
+                                        <div class="block text-sm font-medium text-gray-700">Logo Perusahaan</div>
+                                        <div class="mt-1 sm:mt-0 sm:col-span-2">
+                                            <div class="flex items-center">
+                                                <span class="h-12 w-12 rounded-full overflow-hidden bg-gray-100">
+                                                    <i class="ph-fill ph-qr-code text-3xl text-green-900 flex justify-center items-center h-full mt-1"></i>
+                                                </span>
+                                                <button type="button" class="ml-5 bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-900">Ubah</button>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    </div>
+                                </div>
+                                <!-- Section 2 -->
+                                <div class="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
+                                    <div>
+                                        <h3 class="text-lg leading-6 font-medium text-gray-900">Batas Telat</h3>
+                                    </div>
+                                    <div class="space-y-6 sm:space-y-5">
+                                        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                                            <div class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Batas jam terlambat</div>
+                                            <div class="mt-1 sm:mt-0 sm:col-span-2">
+                                                <input type="time" name="batasTelat" id="batasTelat" class="block w-full max-w-lg rounded-md border border-gray-300 shadow-sm focus:border-green-900 focus:ring-green-900 sm:text-sm px-3 py-2">
+                                            </div>
+                                            <!-- <div class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Melalui Email</div>
+                                        <div class="mt-1 sm:mt-0 sm:col-span-2">
+                                            <div class="max-w-lg space-y-4">
+                                                <div class="relative flex items-start">
+                                                    <div class="flex h-5 items-center">
+                                                        <input id="comments" name="comments" type="checkbox" checked class="h-4 w-4 rounded border-gray-300 text-green-900 focus:ring-green-900 accent-green-900">
+                                                    </div>
+                                                    <div class="ml-3 text-sm">
+                                                        <div class="font-medium text-gray-700">Laporan Mingguan</div>
+                                                        <p class="text-gray-500">Terima ringkasan performa setiap hari Senin.</p>
+                                                    </div>
+                                                </div>
+                                                <div class="relative flex items-start">
+                                                    <div class="flex h-5 items-center">
+                                                        <input id="alerts" name="alerts" type="checkbox" checked class="h-4 w-4 rounded border-gray-300 text-green-900 focus:ring-green-900 accent-green-900">
+                                                    </div>
+                                                    <div class="ml-3 text-sm">
+                                                        <div class="font-medium text-gray-700">Peringatan Keamanan</div>
+                                                        <p class="text-gray-500">Dapatkan notifikasi jika ada aktivitas login yang mencurigakan.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Form Actions -->
+                                <div class="pt-5">
+                                    <div class="flex justify-end">
+                                        <button type="button" onclick="simpanSetting()" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-900 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-900">Simpan Pengaturan</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- PANEL REKAP -->
+                <div id="panel-rekap" role="tabpanel" aria-labelledby="tab-rekap" class="tab-panel hidden fade-in">
+                    <!-- Stats Row -->
+                    <!-- <div class="grid grid-cols-1 gap-5 sm:grid-cols-1 mb-8">
+                        <div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+                            <div class="bg-white border border-r-4 border-green-900 overflow-hidden mb-1 rounded-xl shadow-sm">
+                                <div class="flex">
+                                    <div class="flex-shrink-0 bg-green-900 p-3">
+                                        <i class="ph ph-users-three text-2xl text-white"></i>
+                                    </div>
+                                    <div class="ml-2 w-0 flex-1">
+                                        <dl>
+                                            <dt class="text-sm text-gray-500 truncate">Jumlah Siswa</dt>
+                                            <dd class="flex items-baseline">
+                                                <span id="jmlsiswa" class="text-md font-semibold text-green-900">0</span>
+                                                <span class="ml-2 text-sm font-medium text-green-900 flex items-center">Siswa</span>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white border border-r-4 border-green-500 overflow-hidden mb-1 rounded-xl shadow-sm">
+                                <div class="flex">
+                                    <div class="flex-shrink-0 bg-green-500 p-3">
+                                        <i class="ph ph-checks text-2xl text-white"></i>
+                                    </div>
+                                    <div class="ml-2 w-0 flex-1">
+                                        <dl>
+                                            <dt class="text-sm text-gray-500 truncate">Hadir</dt>
+                                            <dd class="flex items-baseline">
+                                                <span id="jumlahHadir" class="text-md font-semibold text-green-500">0</span>
+                                                <span class="ml-2 text-sm font-medium text-green-500 flex items-center">Siswa</span>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white border border-r-4 border-blue-500 overflow-hidden mb-1 rounded-xl shadow-sm">
+                                <div class="flex">
+                                    <div class="flex-shrink-0 bg-blue-500 p-3">
+                                        <i class="ph ph-envelope text-2xl text-white"></i>
+                                    </div>
+                                    <div class="ml-2 w-0 flex-1">
+                                        <dl>
+                                            <dt class="text-sm text-gray-500 truncate">Izin</dt>
+                                            <dd class="flex items-baseline">
+                                                <span id="jumlahIzin" class="text-md font-semibold text-blue-500">0</span>
+                                                <span class="ml-2 text-sm font-medium text-blue-500 flex items-center">Siswa</span>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white border border-r-4 border-yellow-500 overflow-hidden mb-1 rounded-xl shadow-sm">
+                                <div class="flex">
+                                    <div class="flex-shrink-0 bg-yellow-500 p-3">
+                                        <i class="ph ph-stethoscope text-2xl text-white"></i>
+                                    </div>
+                                    <div class="ml-2 w-0 flex-1">
+                                        <dl>
+                                            <dt class="text-sm text-gray-500 truncate">Sakit</dt>
+                                            <dd class="flex items-baseline">
+                                                <span id="jumlahSakit" class="text-md font-semibold text-yellow-500">0</span>
+                                                <span class="ml-2 text-sm font-medium text-yellow-500 flex items-center">Siswa</span>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white border border-r-4 border-red-500 overflow-hidden mb-1 rounded-xl shadow-sm">
+                                <div class="flex">
+                                    <div class="flex-shrink-0 bg-red-500 p-3">
+                                        <i class="ph ph-empty text-2xl text-white"></i>
+                                    </div>
+                                    <div class="ml-2 w-0 flex-1">
+                                        <dl>
+                                            <dt class="text-sm text-gray-500 truncate">Alfa</dt>
+                                            <dd class="flex items-baseline">
+                                                <span id="jumlahAlfa" class="text-md font-semibold text-red-500">0</span>
+                                                <span class="ml-2 text-sm font-medium text-red-500 flex items-center">Siswa</span>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white border border-r-4 border-orange-500 overflow-hidden mb-1 rounded-xl shadow-sm">
+                                <div class="flex">
+                                    <div class="flex-shrink-0 bg-orange-500 p-3">
+                                        <i class="ph ph-warning text-2xl text-white"></i>
+                                    </div>
+                                    <div class="ml-2 w-0 flex-1">
+                                        <dl>
+                                            <dt class="text-sm text-gray-500 truncate">Terlambat</dt>
+                                            <dd class="flex items-baseline">
+                                                <span id="jumlahTerlambat" class="text-md font-semibold text-orange-500">0</span>
+                                                <span class="ml-2 text-sm font-medium text-orange-500 flex items-center">Siswa</span>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                    <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden min-h-screen">
+                        <div class="px-6 py-5 border-b border-gray-200">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">Filter Absensi</h3>
+                        </div>
+                        <div class="m-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                            <div class="grid grid-cols-4 gap-4 lg:grid-cols-5">
+                                <!-- Kelas -->
+                                <div class="flex min-w-0 flex-col gap-1.5">
+                                    <label for="kelas" class="text-sm font-medium text-gray-600">
+                                        Kelas
+                                    </label>
+                                    <select id="kelas" class="w-full rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm text-gray-700 transition-colors focus:border-green-800 focus:outline-none focus:ring-1 focus:ring-green-800">
+                                        <option value="">Semua Kelas</option>
+                                    </select>
+                                </div>
+                                <!-- Periode -->
+                                <div class="flex min-w-0 flex-col gap-1.5">
+                                    <label for="filter" class="text-sm font-medium text-gray-600">
+                                        Periode
+                                    </label>
+                                    <select id="filter" onchange="ubahFilter()" class="w-full rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm text-gray-700 transition-colors focus:border-green-800 focus:outline-none focus:ring-1 focus:ring-green-800">
+                                        <option value="harian">Harian</option>
+                                        <option value="mingguan">Mingguan</option>
+                                        <option value="bulanan">Bulanan</option>
+                                        <option value="tahunan">Tahunan</option>
+                                    </select>
+                                </div>
+                                <!-- Tanggal -->
+                                <div id="boxTanggal" class="flex min-w-0 flex-col gap-1.5">
+                                    <label for="tanggal" class="text-sm font-medium text-gray-600">
+                                        Tanggal
+                                    </label>
+                                    <input type="date" id="tanggal" class="w-full min-w-0 rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm text-gray-700 transition-colors focus:border-green-800 focus:outline-none focus:ring-1 focus:ring-green-800">
+                                </div>
+                                <!-- Bulan -->
+                                <div id="boxBulan" class="hidden min-w-0 flex-col gap-1.5">
+                                    <label for="bulan" class="text-sm font-medium text-gray-600">
+                                        Bulan
+                                    </label>
+                                    <select id="bulan" class="w-full rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm text-gray-700 transition-colors focus:border-green-800 focus:outline-none focus:ring-1 focus:ring-green-800">
+                                        <option value="1">Januari</option>
+                                        <option value="2">Februari</option>
+                                        <option value="3">Maret</option>
+                                        <option value="4">April</option>
+                                        <option value="5">Mei</option>
+                                        <option value="6">Juni</option>
+                                        <option value="7">Juli</option>
+                                        <option value="8">Agustus</option>
+                                        <option value="9">September</option>
+                                        <option value="10">Oktober</option>
+                                        <option value="11">November</option>
+                                        <option value="12">Desember</option>
+                                    </select>
+                                </div>
+                                <!-- Tahun -->
+                                <div id="boxTahun" class="hidden min-w-0 flex-col gap-1.5">
+                                    <label for="tahun" class="text-sm font-medium text-gray-600">
+                                        Tahun
+                                    </label>
+                                    <select id="tahun" class="w-full rounded-lg border border-gray-300 bg-white px-2 py-2.5 text-sm text-gray-700 transition-colors focus:border-green-800 focus:outline-none focus:ring-1 focus:ring-green-800">
+                                        <option value="2026">2026</option>
+                                        <option value="2025">2025</option>
+                                        <option value="2024">2024</option>
+                                        <option value="2023">2023</option>
+                                    </select>
+                                </div>
+                                <!-- Tombol Tampilkan -->
+                                <div class="flex min-w-0 flex-col justify-end col-span-4 lg:col-span-1">
+                                    <button type="button" onclick="loadAbsensi()" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-green-900 px-2 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-800 focus:ring-offset-2">
+                                        <i class="ph ph-eye text-lg"></i>
+                                        <span>Tampilkan</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="hasilAbsensi" class="mt-3 mx-3"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div> <!-- Penutup Dashboard Wrapper -->
+    <div id="toast-message"></div>
+    <div id="modalSemuaQR" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modalQRTitle" role="dialog" aria-modal="true">
+        <!-- Overlay -->
+        <div class="fixed inset-0 bg-black/50 transition-opacity" onclick="tutupModalQR()"></div>
+        <!-- Modal -->
+        <div class="relative flex min-h-screen items-center justify-center p-4">
+            <div class="relative w-full max-w-[210mm] rounded-xl bg-white shadow-2xl" onclick="event.stopPropagation()">
+                <!-- Header -->
+                <div class="flex items-center justify-between border-b px-5 py-4">
+                    <div class="sm:flex gap-8 items-center">
+                        <div>
+                            <h2 id="modalQRTitle" class="text-lg font-semibold text-gray-900">QR Code Siswa</h2>
+                            <p class="text-sm text-gray-500">QR siswa yang tampil pada halaman tabel saat ini</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="tutupModalQR()" class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700">
+                        <i class="ph ph-x text-xl"></i>
+                    </button>
+                </div>
+                <!-- Isi QR -->
+                <div id="containerSemuaQR" class="grid grid-cols-1 gap-8 p-5 sm:grid-cols-2"></div>
+                <!-- Footer -->
+                <div class="flex justify-end border-t bg-gray-50 px-5 py-3">
+                    <div>
+                        <button type="button" onclick="printDiv('containerSemuaQR')" class="inline-flex items-center justify-center rounded-lg border border-transparent bg-gray-700 px-4 py-1 m-1 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-1 focus:ring-gray-800 focus:ring-offset-1 sm:w-auto transition-colors">
+                            <i class="ph-fill ph-printer mr-2 text-lg"></i> Print Kartu
+                        </button>
+                        <button id="downloadPDF" type="button" class="inline-flex items-center justify-center rounded-lg border border-transparent bg-green-900 px-4 py-1 m-1 text-sm font-medium text-white shadow-sm hover:bg-green-800 focus:outline-none focus:ring-1 focus:ring-green-800 focus:ring-offset-1 sm:w-auto transition-colors">
+                            <i class="ph-fill ph-file-pdf mr-2 text-lg"></i> Download
+                        </button>
+                    </div>
+                    <button type="button" onclick="tutupModalQR()" class="inline-flex items-center justify-center rounded-lg border border-transparent bg-red-700 px-4 py-1 m-1 text-sm font-medium text-white shadow-sm hover:bg-red-800 focus:outline-none focus:ring-1 focus:ring-red-800 focus:ring-offset-1 sm:w-auto transition-colors">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modalQR" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 hidden backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-80 text-center relative">
+            <button onclick="closeModalQR()" class="absolute top-3 right-4 text-gray-400 hover:text-red-500 text-xl"><i class="ph ph-x"></i></button>
+            <h3 class="font-bold text-gray-800 mb-1 text-lg">Kartu QR Siswa</h3>
+            <p class="text-xs text-gray-600 mb-4" id="qr-nama-siswa">Nama Siswa</p>
+            <div id="qrcode-display" class="flex justify-center p-4 bg-white border-2 border-gray-100 rounded-lg mb-4"></div>
+            <button onclick="downloadQR()" class="w-full bg-green-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-green-800 transition">
+                <i class="fas fa-download mr-1"></i> Unduh QR
+            </button>
+        </div>
+    </div>
+    <div id="logout-confirm" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[70] hidden items-center justify-center transition-opacity duration-300 opacity-0">
+        <div class="bg-white rounded-xl shadow-2xl p-6 max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300" id="logout-modal-content">
+            <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+                <i class="ph ph-sign-out text-2xl text-red-600"></i>
+            </div>
+            <h3 class="text-lg font-medium text-center text-gray-900 mb-2">Konfirmasi Keluar</h3>
+            <p class="text-sm text-center text-gray-500 mb-6">Apakah Anda yakin ingin keluar dari sesi dashboard ini?</p>
+            <div class="flex space-x-3">
+                <button onclick="hideLogoutConfirm()" class="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-900 transition-colors">Batal</button>
+                <button onclick="executeLogout()" class="flex-1 py-2 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-colors">Keluar</button>
+            </div>
+        </div>
+    </div>
+    <!-- UNIVERSAL ALERT MODAL -->
+    <div id="alertModal" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div id="alertBox" class="w-full max-w-md scale-95 rounded-2xl bg-white shadow-2xl transition-all duration-200">
+            <!-- Header -->
+            <div class="flex items-center gap-4 border-b border-gray-100 px-6 py-5">
+                <!-- Icon -->
+                <div id="alertIcon" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full">
+                    <i class="text-xl"></i>
+                </div>
+                <!-- Title -->
+                <div class="flex-1">
+                    <h3 id="alertTitle" class="text-lg font-bold text-gray-800">
+                        Informasi
+                    </h3>
+                </div>
+                <!-- Close -->
+                <button onclick="closeAlert()" class="text-gray-400 transition hover:text-gray-700">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            <!-- Content -->
+            <div class="px-6 py-5">
+                <p id="alertMessage" class="text-sm leading-relaxed text-gray-600">
+                    Pesan alert
+                </p>
+            </div>
+            <!-- Footer -->
+            <div class="flex justify-end gap-3 border-t border-gray-100 px-6 py-4">
+                <!-- Cancel -->
+                <button id="alertCancel" onclick="closeAlert()" class="hidden rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100">
+                    Batal
+                </button>
+                <!-- OK -->
+                <button id="alertOk" onclick="closeAlert()" class="rounded-lg px-5 py-2 text-sm font-semibold text-white transition">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
   <script src="app.js"></script>
+    <?!= include('alert'); ?>
+    <?!= include('Script'); ?>
+    <?!= include('ScriptTabelSiswa'); ?>
 </body>
+
 </html>
