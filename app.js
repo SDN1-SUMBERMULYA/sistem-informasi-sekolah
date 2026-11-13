@@ -137,7 +137,7 @@ function showApp(nama, role) {
     // Jalankan pengambilan data inti berurutan
     getSemuaSiswa('', () => {
         loadDaftarKelas();
-        loadSiswaBelumAbsen();
+        //loadSiswaBelumAbsen();
     });
     bukaSetting();
     //loadJumlahStatus();
