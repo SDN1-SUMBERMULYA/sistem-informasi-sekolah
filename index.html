@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Absensi Sekolah QR Code</title>
     
-    <!-- Dependencies -->
+    <!-- External Libraries -->
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,6 +16,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
+    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
             theme: {
@@ -28,8 +29,11 @@
             }
         }
     </script>
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Custom Styles -->
     <style>
         body { font-family: 'Inter', sans-serif; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -80,7 +84,7 @@
                     </div>
                 </div>
                 <div>
-                    <button id="login-btn" onclick="handleLogin()" class="w-full flex justify-center py-1 px-4 border border-transparent font-medium rounded-lg text-white bg-green-900 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-900 transition-colors shadow-sm">
+                    <button id="login-btn" onclick="handleLogin()" class="w-full flex justify-center py-2 px-4 border border-transparent font-medium rounded-lg text-white bg-green-900 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-900 transition-colors shadow-sm">
                         <i id="login-icon" class="ph ph-sign-in text-lg mr-3"></i>
                         <span id="login-text">Masuk Sekarang</span>
                     </button>
@@ -135,7 +139,7 @@
             </div>
         </aside>
 
-        <!-- Overlay -->
+        <!-- Overlay for Mobile -->
         <div id="mobile-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-10 hidden md:hidden" onclick="toggleSidebar()"></div>
 
         <!-- Main Content -->
@@ -214,6 +218,55 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Activity Stats Section -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                        <div class="bg-white border border-r-4 border-green-500 overflow-hidden rounded-xl shadow-sm p-3">
+                            <div class="flex items-center">
+                                <i class="ph ph-checks text-3xl text-green-500 bg-green-50 p-2 rounded-lg"></i>
+                                <div class="ml-3">
+                                    <p class="text-xs text-gray-500">Hadir</p>
+                                    <h3 class="text-lg font-bold text-gray-900" id="jumlahHadir">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-r-4 border-orange-500 overflow-hidden rounded-xl shadow-sm p-3">
+                            <div class="flex items-center">
+                                <i class="ph ph-warning text-3xl text-orange-500 bg-orange-50 p-2 rounded-lg"></i>
+                                <div class="ml-3">
+                                    <p class="text-xs text-gray-500">Terlambat</p>
+                                    <h3 class="text-lg font-bold text-gray-900" id="jumlahTerlambat">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-r-4 border-yellow-500 overflow-hidden rounded-xl shadow-sm p-3">
+                            <div class="flex items-center">
+                                <i class="ph ph-stethoscope text-3xl text-yellow-500 bg-yellow-50 p-2 rounded-lg"></i>
+                                <div class="ml-3">
+                                    <p class="text-xs text-gray-500">Sakit</p>
+                                    <h3 class="text-lg font-bold text-gray-900" id="jumlahSakit">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-r-4 border-blue-500 overflow-hidden rounded-xl shadow-sm p-3">
+                            <div class="flex items-center">
+                                <i class="ph ph-envelope text-3xl text-blue-500 bg-blue-50 p-2 rounded-lg"></i>
+                                <div class="ml-3">
+                                    <p class="text-xs text-gray-500">Izin</p>
+                                    <h3 class="text-lg font-bold text-gray-900" id="jumlahIzin">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-r-4 border-red-500 overflow-hidden rounded-xl shadow-sm p-3">
+                            <div class="flex items-center">
+                                <i class="ph ph-empty text-3xl text-red-500 bg-red-50 p-2 rounded-lg"></i>
+                                <div class="ml-3">
+                                    <p class="text-xs text-gray-500">Alfa</p>
+                                    <h3 class="text-lg font-bold text-gray-900" id="jumlahAlfa">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- PANEL 2: DATA SISWA -->
@@ -224,28 +277,25 @@
                             <p class="mt-2 text-sm text-gray-700">Download Kode QR Dan Kartu Pelajar Siswa.</p>
                         </div>
                         <div class="m-1 flex justify-between">
-                            <button id="tampilSemuaQR" type="button" onclick="tampilkanSemuaQR()" class="w-full inline-flex items-center justify-center rounded-lg bg-green-900 px-4 py-1 m-1 text-sm font-medium text-white shadow-sm hover:bg-green-800 transition-colors hidden">
-                                <i class="ph ph-identification-card mr-2 text-lg"></i>Tampilkan Kartu Identitas
+                            <button id="tampilSemuaQR" type="button" onclick="tampilkanSemuaQR()" class="w-full inline-flex items-center justify-center rounded-lg bg-green-900 px-4 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-green-800 transition-colors hidden">
+                                <i class="ph ph-identification-card mr-2 text-lg"></i>Cetak Kartu Massal
                             </button>
                         </div>
                     </div>
-                    <div class="flex items-center mb-4">
-                        <div class="flex">
-                            <div class="relative mr-3">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="ph ph-magnifying-glass text-gray-400"></i>
-                                </div>
-                                <input id="cariSiswa" type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 bg-white sm:text-sm rounded-lg" placeholder="Cari Nama atau NISN...">
+                    <div class="flex flex-wrap gap-3 mb-4">
+                        <div class="relative flex-1 min-w-[200px]">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ph ph-magnifying-glass text-gray-400"></i>
                             </div>
-                            <select id="filter-kelas" class="block px-3 py-2 border border-gray-300 bg-white sm:text-sm rounded-lg">
-                                <option value="">Semua Kelas</option>
-                            </select>
+                            <input id="cariSiswa" type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 bg-white sm:text-sm rounded-lg" placeholder="Cari Nama atau NISN...">
                         </div>
+                        <select id="filter-kelas" class="block px-3 py-2 border border-gray-300 bg-white sm:text-sm rounded-lg w-full sm:w-auto">
+                            <option value="">Semua Kelas</option>
+                        </select>
                     </div>
-                    <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
-                        <div class="overflow-x-auto relative">
+                    <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden relative">
+                        <div class="overflow-x-auto min-h-[300px]">
                             <table id="dataSiswa" class="min-w-full divide-y divide-gray-300"></table>
-                            <!-- Custom loading state table -->
                             <div id="loadtabel" class="absolute inset-0 bg-white/50 backdrop-blur-[2px] flex items-center justify-center hidden z-10">
                                 <div class="flex flex-col items-center">
                                     <div class="h-8 w-8 animate-spin rounded-full border-4 border-green-900 border-t-transparent mb-2"></div>
@@ -253,17 +303,19 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Pagination Container (Auto Generated in JS) -->
+                        <div id="paginationContainer"></div>
                     </div>
                 </div>
 
                 <!-- PANEL 3: SCAN QR -->
                 <div id="panel-reports" role="tabpanel" class="tab-panel hidden fade-in">
-                    <div class="bg-white shadow-sm rounded-xl border border-gray-100 px-3 py-8 text-center flex flex-col items-center justify-center">
+                    <div class="bg-white shadow-sm rounded-xl border border-gray-100 px-3 py-16 text-center flex flex-col items-center justify-center min-h-[400px]">
                         <i class="ph-duotone ph-qr-code text-8xl text-green-200 mb-4"></i>
-                        <h3 class="text-lg font-medium text-gray-900">Scan Kode QR Siswa</h3>
-                        <p class="mt-2 text-sm text-gray-500 max-w-lg mx-auto">Kamera tidak bisa diakses langsung di sini karena batasan hosting. Klik tombol di bawah untuk membuka halaman scan kamera penuh.</p>
-                        <button onclick="openScanPage()" class="mt-6 inline-flex items-center px-4 py-2 border border-green-900 shadow-sm text-sm font-medium rounded-lg text-green-900 bg-white hover:bg-green-50 transition-colors">
-                            <i class="ph ph-barcode mr-2"></i> Buka Kamera Scan
+                        <h3 class="text-xl font-bold text-gray-900">Scan Kode QR Siswa</h3>
+                        <p class="mt-2 text-sm text-gray-500 max-w-lg mx-auto">Kamera perangkat diperlukan untuk memindai QR Code. Klik tombol di bawah untuk membuka halaman scan kamera terpisah (tanpa perlu login ulang).</p>
+                        <button onclick="openScanPage()" class="mt-8 inline-flex items-center px-6 py-3 border border-transparent shadow-md text-base font-medium rounded-lg text-white bg-green-900 hover:bg-green-800 transition-colors">
+                            <i class="ph ph-barcode mr-2 text-xl"></i> Buka Kamera Scan
                         </button>
                     </div>
                 </div>
@@ -275,29 +327,24 @@
                             <h1 class="text-xl font-semibold text-gray-900">Input Absen Secara Manual</h1>
                         </div>
                         <div class="m-1 flex justify-between">
-                            <button onclick="konfirmasiAlfaMassal()" id="btnAlfa" class="w-full inline-flex items-center justify-center rounded-lg bg-green-900 px-4 py-1 m-1 text-sm font-medium text-white shadow-sm hover:bg-green-800 transition-colors hidden">
+                            <button onclick="konfirmasiAlfaMassal()" id="btnAlfa" class="w-full inline-flex items-center justify-center rounded-lg bg-red-700 px-4 py-1.5 m-1 text-sm font-medium text-white shadow-sm hover:bg-red-800 transition-colors hidden">
                                 <i class="ph ph-empty mr-2 text-lg"></i>Tandai Sisa Sebagai Alfa
                             </button>
                         </div>
                     </div>
-                    <div class="flex items-center mb-4">
-                        <div class="flex">
-                            <div class="relative mr-3">
-                                <input id="manual-tanggal" type="date" class="block w-full px-3 py-2 border border-gray-300 rounded-lg sm:text-sm">
-                            </div>
-                            <select id="filterManual" class="block px-3 py-2 border border-gray-300 rounded-lg sm:text-sm mr-3">
-                                <option value="">Semua Kelas</option>
-                            </select>
-                            <button id="btnfilter" type="button" class="bg-green-900 hover:bg-green-800 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center">
-                                <i class="ph ph-funnel mr-2"></i>Filter
-                            </button>
-                        </div>
+                    <div class="flex flex-wrap items-center gap-3 mb-4">
+                        <input id="manual-tanggal" type="date" class="block px-3 py-2 border border-gray-300 rounded-lg sm:text-sm w-full sm:w-auto">
+                        <select id="filterManual" class="block px-3 py-2 border border-gray-300 rounded-lg sm:text-sm w-full sm:w-auto">
+                            <option value="">Semua Kelas</option>
+                        </select>
+                        <button id="btnfilter" type="button" class="bg-green-900 hover:bg-green-800 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center w-full sm:w-auto justify-center">
+                            <i class="ph ph-funnel mr-2"></i>Filter
+                        </button>
                     </div>
                     <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden relative">
-                        <div class="overflow-x-auto">
+                        <div class="overflow-x-auto min-h-[200px]">
                             <table id="dataManual" class="min-w-full divide-y divide-gray-300"></table>
-                            <!-- Loading Manual -->
-                            <div id="loadmanual" class="absolute inset-0 bg-white/50 backdrop-blur-[2px] flex items-center justify-center hidden z-10 min-h-[200px]">
+                            <div id="loadmanual" class="absolute inset-0 bg-white/70 backdrop-blur-[2px] flex items-center justify-center hidden z-10">
                                 <div class="flex flex-col items-center">
                                     <div class="h-8 w-8 animate-spin rounded-full border-4 border-green-900 border-t-transparent mb-2"></div>
                                     <p class="text-green-900 text-xs font-bold">Memuat Data...</p>
@@ -313,30 +360,30 @@
                         <div class="px-6 py-5 border-b border-gray-200">
                             <h3 class="text-lg leading-6 font-medium text-gray-900">Filter Rekap Absensi</h3>
                         </div>
-                        <div class="m-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-                            <div class="grid grid-cols-4 gap-4 lg:grid-cols-5">
-                                <div class="flex min-w-0 flex-col gap-1.5">
+                        <div class="m-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                                <div class="flex flex-col gap-1.5">
                                     <label class="text-sm font-medium text-gray-600">Kelas</label>
-                                    <select id="kelas" class="w-full rounded-lg border border-gray-300 px-2 py-2 text-sm text-gray-700">
+                                    <select id="kelas" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:ring-green-900 focus:border-green-900">
                                         <option value="">Semua Kelas</option>
                                     </select>
                                 </div>
-                                <div class="flex min-w-0 flex-col gap-1.5">
+                                <div class="flex flex-col gap-1.5">
                                     <label class="text-sm font-medium text-gray-600">Periode</label>
-                                    <select id="filter" onchange="ubahFilter()" class="w-full rounded-lg border border-gray-300 px-2 py-2 text-sm text-gray-700">
+                                    <select id="filter" onchange="ubahFilter()" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:ring-green-900 focus:border-green-900">
                                         <option value="harian">Harian</option>
                                         <option value="mingguan">Mingguan</option>
                                         <option value="bulanan">Bulanan</option>
                                         <option value="tahunan">Tahunan</option>
                                     </select>
                                 </div>
-                                <div id="boxTanggal" class="flex min-w-0 flex-col gap-1.5">
+                                <div id="boxTanggal" class="flex flex-col gap-1.5">
                                     <label class="text-sm font-medium text-gray-600">Tanggal</label>
-                                    <input type="date" id="tanggal" class="w-full rounded-lg border border-gray-300 px-2 py-2 text-sm">
+                                    <input type="date" id="tanggal" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-green-900 focus:border-green-900">
                                 </div>
-                                <div id="boxBulan" class="hidden min-w-0 flex-col gap-1.5">
+                                <div id="boxBulan" class="hidden flex-col gap-1.5">
                                     <label class="text-sm font-medium text-gray-600">Bulan</label>
-                                    <select id="bulan" class="w-full rounded-lg border border-gray-300 px-2 py-2 text-sm text-gray-700">
+                                    <select id="bulan" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700">
                                         <option value="1">Januari</option>
                                         <option value="2">Februari</option>
                                         <option value="3">Maret</option>
@@ -351,23 +398,23 @@
                                         <option value="12">Desember</option>
                                     </select>
                                 </div>
-                                <div id="boxTahun" class="hidden min-w-0 flex-col gap-1.5">
+                                <div id="boxTahun" class="hidden flex-col gap-1.5">
                                     <label class="text-sm font-medium text-gray-600">Tahun</label>
-                                    <select id="tahun" class="w-full rounded-lg border border-gray-300 px-2 py-2 text-sm text-gray-700">
+                                    <select id="tahun" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700">
                                         <option value="2026">2026</option>
                                         <option value="2025">2025</option>
                                         <option value="2024">2024</option>
                                         <option value="2023">2023</option>
                                     </select>
                                 </div>
-                                <div class="flex min-w-0 flex-col justify-end col-span-4 lg:col-span-1">
-                                    <button type="button" onclick="loadAbsensi()" class="w-full flex items-center justify-center gap-2 rounded-lg bg-green-900 px-2 py-2 text-sm font-semibold text-white hover:bg-green-800 transition-colors">
+                                <div class="flex flex-col justify-end">
+                                    <button type="button" onclick="loadAbsensi()" class="w-full flex items-center justify-center gap-2 rounded-lg bg-green-900 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 transition-colors shadow-sm">
                                         <i class="ph ph-eye text-lg"></i> Tampilkan
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        <div id="hasilAbsensi" class="mt-3 mx-3"></div>
+                        <div id="hasilAbsensi" class="mt-4 mx-4 pb-6"></div>
                     </div>
                 </div>
 
@@ -382,30 +429,31 @@
                             <div class="space-y-6 sm:space-y-5">
                                 <div>
                                     <h3 class="text-lg font-medium text-gray-900">Profil Sekolah</h3>
+                                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Informasi ini akan ditampilkan pada dokumen resmi (Kartu, Laporan).</p>
                                 </div>
                                 <div class="space-y-6 sm:space-y-5">
                                     <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                                         <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Nama Sekolah</label>
                                         <div class="mt-1 sm:mt-0 sm:col-span-2">
-                                            <input type="text" id="namaSekolah" class="block w-full max-w-lg rounded-md border border-gray-300 px-3 py-2 text-sm">
+                                            <input type="text" id="namaSekolah" class="block w-full max-w-lg rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-900 focus:ring-green-900">
                                         </div>
                                     </div>
                                     <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                                         <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">NPSN</label>
                                         <div class="mt-1 sm:mt-0 sm:col-span-2">
-                                            <input type="number" id="npsn" class="block w-full max-w-lg rounded-md border border-gray-300 px-3 py-2 text-sm">
+                                            <input type="number" id="npsn" class="block w-full max-w-lg rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-900 focus:ring-green-900">
                                         </div>
                                     </div>
                                     <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                                         <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Kepala Sekolah</label>
                                         <div class="mt-1 sm:mt-0 sm:col-span-2">
-                                            <input type="text" id="kepalaSekolah" class="block w-full max-w-lg rounded-md border border-gray-300 px-3 py-2 text-sm">
+                                            <input type="text" id="kepalaSekolah" class="block w-full max-w-lg rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-900 focus:ring-green-900">
                                         </div>
                                     </div>
                                     <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                                         <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">NIP</label>
                                         <div class="mt-1 sm:mt-0 sm:col-span-2">
-                                            <input type="text" id="nip" class="block w-full max-w-lg rounded-md border border-gray-300 px-3 py-2 text-sm">
+                                            <input type="text" id="nip" class="block w-full max-w-lg rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-900 focus:ring-green-900">
                                         </div>
                                     </div>
                                 </div>
@@ -418,14 +466,14 @@
                                     <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                                         <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Batas Jam (HH:mm)</label>
                                         <div class="mt-1 sm:mt-0 sm:col-span-2">
-                                            <input type="time" id="batasTelat" class="block w-full max-w-lg rounded-md border border-gray-300 px-3 py-2 text-sm">
+                                            <input type="time" id="batasTelat" class="block w-full max-w-lg rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-900 focus:ring-green-900">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="pt-5">
                                 <div class="flex justify-end">
-                                    <button type="button" onclick="simpanSetting()" id="btnSaveSetting" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-900 hover:bg-green-800 transition">
+                                    <button type="button" onclick="simpanSetting()" id="btnSaveSetting" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-900 hover:bg-green-800 transition">
                                         Simpan Pengaturan
                                     </button>
                                 </div>
@@ -438,44 +486,47 @@
         </div>
     </div> <!-- /Dashboard Wrapper -->
 
-    <!-- Modals & Toasts Container -->
+    <!-- ==================== MODALS & COMPONENTS ==================== -->
     <div id="toast-message"></div>
 
     <!-- Modal QR Satuan -->
-    <div id="modalQR" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 hidden backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-2xl p-6 w-80 text-center relative">
+    <div id="modalQR" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 hidden backdrop-blur-sm transition-opacity duration-300">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-80 text-center relative transform transition-transform">
             <button onclick="closeModalQR()" class="absolute top-3 right-4 text-gray-400 hover:text-red-500 text-xl"><i class="ph ph-x"></i></button>
             <h3 class="font-bold text-gray-800 mb-1 text-lg">Kartu QR Siswa</h3>
             <p class="text-xs text-gray-600 mb-4" id="qr-nama-siswa">Nama Siswa</p>
             <div id="qrcode-display" class="flex justify-center p-4 bg-white border-2 border-gray-100 rounded-lg mb-4"></div>
-            <button onclick="downloadQR()" class="w-full bg-green-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-green-800 transition">
-                Unduh QR
+            <button onclick="downloadQR()" class="w-full bg-green-900 text-white py-2 rounded-lg text-sm font-medium hover:bg-green-800 transition shadow-sm">
+                <i class="ph ph-download-simple mr-1"></i> Unduh QR
             </button>
         </div>
     </div>
 
     <!-- Modal Cetak Semua QR -->
     <div id="modalSemuaQR" class="fixed inset-0 z-[60] hidden overflow-y-auto">
-        <div class="fixed inset-0 bg-black/75 transition-opacity" onclick="tutupModalQR()"></div>
-        <div class="relative flex min-h-screen items-center justify-center p-4">
-            <div class="relative w-full max-w-[210mm] rounded-xl bg-white shadow-2xl" onclick="event.stopPropagation()">
-                <div class="flex items-center justify-between border-b px-5 py-4">
+        <div class="fixed inset-0 bg-black/75 transition-opacity backdrop-blur-sm" onclick="tutupModalQR()"></div>
+        <div class="relative flex min-h-screen items-center justify-center p-4 py-10">
+            <div class="relative w-full max-w-[210mm] rounded-xl bg-white shadow-2xl overflow-hidden" onclick="event.stopPropagation()">
+                <div class="flex items-center justify-between border-b px-5 py-4 bg-gray-50">
                     <div>
-                        <h2 class="text-lg font-semibold text-gray-900">QR Code Siswa (Satu Halaman)</h2>
+                        <h2 class="text-lg font-bold text-gray-900">Preview Cetak Kartu Pelajar</h2>
+                        <p class="text-xs text-gray-500 mt-1">Gunakan kertas ukuran A4. Atur margin ke 'None' saat mencetak.</p>
                     </div>
-                    <button type="button" onclick="tutupModalQR()" class="rounded-lg p-2 text-gray-500 hover:bg-gray-100">
+                    <button type="button" onclick="tutupModalQR()" class="rounded-lg p-2 text-gray-500 hover:bg-gray-200 transition">
                         <i class="ph ph-x text-xl"></i>
                     </button>
                 </div>
-                <div id="containerSemuaQR" class="grid grid-cols-1 gap-8 p-5 sm:grid-cols-2"></div>
-                <div class="flex justify-end border-t bg-gray-50 px-5 py-3">
-                    <button type="button" onclick="printDiv('containerSemuaQR')" class="inline-flex items-center bg-gray-700 px-4 py-1 m-1 text-sm font-medium text-white rounded-lg hover:bg-gray-800 transition-colors">
-                        <i class="ph-fill ph-printer mr-2 text-lg"></i> Print
+                <!-- Area Render ID Card -->
+                <div id="containerSemuaQR" class="grid grid-cols-1 gap-8 p-8 sm:grid-cols-2 bg-white"></div>
+                
+                <div class="flex flex-wrap justify-end gap-2 border-t bg-gray-50 px-5 py-4">
+                    <button type="button" onclick="printDiv('containerSemuaQR')" class="inline-flex items-center bg-gray-700 px-5 py-2 text-sm font-medium text-white rounded-lg hover:bg-gray-800 transition shadow-sm">
+                        <i class="ph-fill ph-printer mr-2 text-lg"></i> Cetak ke Printer
                     </button>
-                    <button id="downloadPDF" type="button" class="inline-flex items-center bg-green-900 px-4 py-1 m-1 text-sm font-medium text-white rounded-lg hover:bg-green-800 transition-colors">
+                    <button id="downloadPDF" type="button" class="inline-flex items-center bg-green-900 px-5 py-2 text-sm font-medium text-white rounded-lg hover:bg-green-800 transition shadow-sm">
                         <i class="ph-fill ph-file-pdf mr-2 text-lg"></i> Download PDF
                     </button>
-                    <button type="button" onclick="tutupModalQR()" class="inline-flex items-center bg-red-700 px-4 py-1 m-1 text-sm font-medium text-white rounded-lg hover:bg-red-800 transition-colors">
+                    <button type="button" onclick="tutupModalQR()" class="inline-flex items-center bg-red-700 px-5 py-2 text-sm font-medium text-white rounded-lg hover:bg-red-800 transition shadow-sm">
                         Tutup
                     </button>
                 </div>
@@ -484,23 +535,23 @@
     </div>
 
     <!-- Modal Konfirmasi Logout -->
-    <div id="logout-confirm" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[70] hidden items-center justify-center transition-opacity duration-300 opacity-0">
+    <div id="logout-confirm" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[70] hidden items-center justify-center transition-opacity duration-300 opacity-0 backdrop-blur-sm">
         <div class="bg-white rounded-xl shadow-2xl p-6 max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300" id="logout-modal-content">
             <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
                 <i class="ph ph-sign-out text-2xl text-red-600"></i>
             </div>
-            <h3 class="text-lg font-medium text-center text-gray-900 mb-2">Konfirmasi Keluar</h3>
-            <p class="text-sm text-center text-gray-500 mb-6">Apakah Anda yakin ingin keluar dari sesi dashboard ini?</p>
+            <h3 class="text-lg font-bold text-center text-gray-900 mb-2">Konfirmasi Keluar</h3>
+            <p class="text-sm text-center text-gray-500 mb-6">Apakah Anda yakin ingin mengakhiri sesi saat ini?</p>
             <div class="flex space-x-3">
-                <button onclick="hideLogoutConfirm()" class="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white hover:bg-gray-50">Batal</button>
-                <button onclick="executeLogout()" class="flex-1 py-2 px-4 border border-transparent rounded-lg text-sm text-white bg-red-600 hover:bg-red-700">Keluar</button>
+                <button onclick="hideLogoutConfirm()" class="flex-1 py-2.5 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition">Batal</button>
+                <button onclick="executeLogout()" class="flex-1 py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition shadow-sm">Ya, Keluar</button>
             </div>
         </div>
     </div>
 
     <!-- Alert Universal Modal -->
-    <div id="alertModal" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-        <div id="alertBox" class="w-full max-w-md scale-95 rounded-2xl bg-white shadow-2xl transition-all duration-200">
+    <div id="alertModal" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4 transition-opacity duration-200">
+        <div id="alertBox" class="w-full max-w-md scale-95 rounded-2xl bg-white shadow-2xl transition-transform duration-200">
             <div class="flex items-center gap-4 border-b border-gray-100 px-6 py-5">
                 <div id="alertIcon" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full">
                     <i class="text-xl"></i>
@@ -508,520 +559,21 @@
                 <div class="flex-1">
                     <h3 id="alertTitle" class="text-lg font-bold text-gray-800">Informasi</h3>
                 </div>
-                <button onclick="closeAlert()" class="text-gray-400 hover:text-gray-700">
+                <button onclick="closeAlert()" class="text-gray-400 hover:text-gray-700 transition">
                     <i class="ph ph-x text-xl"></i>
                 </button>
             </div>
             <div class="px-6 py-5">
-                <p id="alertMessage" class="text-sm text-gray-600"></p>
+                <p id="alertMessage" class="text-sm leading-relaxed text-gray-600"></p>
             </div>
-            <div class="flex justify-end gap-3 border-t border-gray-100 px-6 py-4">
-                <button id="alertCancel" onclick="closeAlert()" class="hidden rounded-lg border border-gray-300 px-5 py-2 text-sm text-gray-600 hover:bg-gray-100">Batal</button>
-                <button id="alertOk" onclick="closeAlert()" class="rounded-lg px-5 py-2 text-sm text-white transition">OK</button>
+            <div class="flex justify-end gap-3 border-t border-gray-100 px-6 py-4 bg-gray-50 rounded-b-2xl">
+                <button id="alertCancel" onclick="closeAlert()" class="hidden rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition">Batal</button>
+                <button id="alertOk" onclick="closeAlert()" class="rounded-lg px-6 py-2 text-sm font-semibold text-white transition shadow-sm">OK</button>
             </div>
         </div>
     </div>
 
-<!-- ============================================== -->
-<!-- SCRIPT REST API LOGIC -->
-<!-- ============================================== -->
-<script>
-// ===============================================
-// 1. KONFIGURASI WEB APP URL (GANTI DENGAN URL MILIKMU)
-// ===============================================
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQHq9Gw2aUajk2s9yhEQ8P7tlUAFxP7MmT4gIWkRNEJUC17t67Ot3aqVyHaY5J_6Zeeg/exec'; // <--- GANTI INI
-const SCAN_PAGE_URL = 'https://sdn1-sumbermulya.github.io/absen.html';
-
-// ===============================================
-// 2. FUNGSI FETCH (PENGGANTI google.script.run)
-// ===============================================
-async function fetchAPI(action, payload = {}) {
-    try {
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            // Gunakan text/plain untuk menghindari error preflight CORS di browser
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: action, data: payload })
-        });
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error("API Error:", error);
-        throw new Error('Gagal menghubungi server. Periksa koneksi internet Anda.');
-    }
-}
-
-// ===============================================
-// 3. GLOBAL VARIABLES
-// ===============================================
-let TOKEN = null;
-let html5QrCode = null;
-let chartAbsensi = null;
-let chartJumlahSiswa = null;
-let dataSemuaSiswa = [];
-let sheetPengaturan = {};
-let jumlahTotalSiswa = 0;
-let halamanSaatIni = 1;
-let siswaPerHalaman = 10;
-const qrCache = {};
-
-// ===============================================
-// 4. INIT / BOOTSTRAP APP
-// ===============================================
-document.addEventListener("DOMContentLoaded", async () => {
-    const savedToken = sessionStorage.getItem('loginToken');
-    
-    if (savedToken) {
-        try {
-            const res = await fetchAPI('checkSession', { token: savedToken });
-            if (res.success) {
-                TOKEN = savedToken;
-                showApp(res.nama, res.role);
-            } else {
-                sessionStorage.removeItem('loginToken');
-                sessionStorage.removeItem('activeTab');
-                showLoginScreen();
-            }
-        } catch(e) {
-            showLoginScreen();
-        }
-    } else {
-        showLoginScreen();
-    }
-
-    document.getElementById('passuser').addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') handleLogin();
-    });
-
-    // Default Dates
-    document.getElementById('manual-tanggal').valueAsDate = new Date();
-    document.getElementById('tanggal').valueAsDate = new Date();
-});
-
-function showLoginScreen() {
-    setTimeout(() => {
-        const loader = document.getElementById('loader');
-        loader.style.opacity = '0';
-        setTimeout(() => {
-            loader.classList.add('hidden');
-            document.getElementById('login-screen').classList.remove('hidden');
-        }, 500);
-    }, 1000);
-}
-
-function showApp(nama, role) {
-    // Ambil semua data inti
-    getSemuaSiswa('', () => {
-        loadDaftarKelas();
-        loadSiswaBelumAbsen();
-    });
-    bukaSetting();
-    loadJumlahStatus();
-
-    document.getElementById('loader').classList.add('hidden');
-    
-    const savedTab = sessionStorage.getItem('activeTab');
-    if (savedTab) {
-        const activeTabPanels = document.querySelector('[aria-controls="'+savedTab.trim()+'"]');
-        const defaultTab = document.getElementById(savedTab.trim());
-        if(defaultTab) defaultTab.classList.remove('hidden');
-        if(activeTabPanels) activeTabPanels.click();
-    }
-    
-    // Header Info
-    const words = nama ? nama.split(/\s+/) : ["Admin"];
-    const initials = words.length >= 2 ? words[0].charAt(0) + words[1].charAt(0) : words[0].substring(0, 2);
-    document.getElementById('user-avatar').innerText = initials.toUpperCase();
-    document.getElementById('user-name-display').innerText = words.join(" ");
-    document.getElementById('user-role-display').innerText = role || "Administrator";
-    
-    setTimeout(() => {
-        document.getElementById('login-screen').classList.add('hidden');
-        const dashboard = document.getElementById('dashboard-wrapper');
-        dashboard.classList.remove('hidden');
-        dashboard.classList.add('flex');
-    }, 500);
-}
-
-// ===============================================
-// 5. LOGIN & LOGOUT
-// ===============================================
-async function handleLogin() {
-    const username = document.getElementById('namauser').value.trim();
-    const password = document.getElementById('passuser').value;
-    const btn = document.getElementById('login-btn');
-    const btnText = document.getElementById('login-text');
-    const btnIcon = document.getElementById('login-icon');
-
-    if (!username || !password) {
-        showToast('Username dan password wajib diisi.', 'error');
-        return;
-    }
-
-    btnText.textContent = 'Memproses...';
-    btnIcon.className = 'ph ph-spinner animate-spin text-lg mr-3';
-    btn.disabled = true;
-
-    try {
-        const res = await fetchAPI('login', { username, password });
-        if (res.success) {
-            TOKEN = res.token;
-            sessionStorage.setItem('loginToken', TOKEN);
-            showApp(res.nama, res.role);
-            btnText.textContent = 'Login Berhasil';
-            btnIcon.className = 'ph ph-check-circle text-lg mr-3';
-        } else {
-            showToast(res.message, 'error');
-            btnText.textContent = 'Masuk Sekarang';
-            btnIcon.className = 'ph ph-sign-in text-lg mr-3';
-        }
-    } catch (err) {
-        showToast(err.message, 'error');
-        btnText.textContent = 'Masuk Sekarang';
-        btnIcon.className = 'ph ph-sign-in text-lg mr-3';
-    }
-    btn.disabled = false;
-}
-
-async function executeLogout() {
-    hideLogoutConfirm();
-    setTimeout(() => {
-        const dashboard = document.getElementById('dashboard-wrapper');
-        dashboard.classList.add('hidden');
-        dashboard.classList.remove('flex');
-        
-        const loginScreen = document.getElementById('login-screen');
-        loginScreen.classList.remove('hidden');
-        
-        document.getElementById('login-text').textContent = 'Masuk Sekarang';
-        document.getElementById('login-icon').className = 'ph ph-sign-in text-lg mr-3';
-    }, 300);
-    
-    // Run logout API (Background)
-    fetchAPI('logout', { token: TOKEN }).catch(console.error);
-    
-    sessionStorage.removeItem('loginToken');
-    sessionStorage.removeItem('activeTab');
-    TOKEN = null;
-}
-
-// ===============================================
-// 6. FUNGSI DATA SISWA & DASHBOARD
-// ===============================================
-async function getSemuaSiswa(kelas, callback) {
-    try {
-        const res = await fetchAPI('getSemuaSiswa', { token: TOKEN, kelas: kelas });
-        if (res.success) {
-            jumlahTotalSiswa = res.jumlahSiswa;
-            dataSemuaSiswa = res.data;
-            tabelSiswa(dataSemuaSiswa);
-            renderChartJumlahSiswa();
-            if (typeof callback === 'function') callback();
-        } else {
-            showToast(res.message, 'error');
-        }
-    } catch(err) {
-        showToast('Terjadi kesalahan saat memuat data siswa.', 'error');
-        console.log(err);
-    }
-}
-
-async function loadSiswaBelumAbsen() {
-    const kelas = document.getElementById('filterManual').value;
-    const tanggal = document.getElementById('manual-tanggal').value;
-    
-    try {
-        const res = await fetchAPI('getSiswaBelumAbsen', { token: TOKEN, tanggal, kelas });
-        if (!res.success) {
-            showToast('Error : ' + res.message, 'error');
-            return;
-        }
-        const jumlahBelumAbsen = res.data.length;
-        renderManualTable(res.data, tanggal);
-        updateChartAbsensi(jumlahTotalSiswa, jumlahBelumAbsen);
-    } catch (err) {
-        showToast('Gagal memuat daftar kehadiran manual.', 'error');
-    }
-}
-
-async function simpanStatusManual(siswaId, tanggal) {
-    const status = document.getElementById('status-' + siswaId).value;
-    try {
-        const res = await fetchAPI('setStatusManual', { token: TOKEN, siswaId, tanggal, status });
-        if (res.success) {
-            showToast('Data Tersimpan!', 'success');
-            loadSiswaBelumAbsen(); 
-        } else {
-            showToast(res.message, 'error');
-        }
-    } catch (err) {
-        showToast('Gagal menyimpan status.', 'error');
-    }
-}
-
-function konfirmasiAlfaMassal() {
-    const tanggal = document.getElementById('btnAlfa').dataset.tanggal;
-    const kelas = document.getElementById('filterManual').value;
-    showAlert({
-        type: "question",
-        title: "Tandai Semua Sebagai Alfa?",
-        message: `Tandai semua siswa kelas <b>${kelas || 'Semua'}</b> yang belum absen di tanggal <b>${tanggal}</b> sebagai ALFA?<br>Tindakan ini tidak bisa dibatalkan otomatis.`,
-        okText: "Ya",
-        cancelText: "Batal",
-        showCancel: true,
-        onOk: async function () {
-            try {
-                const res = await fetchAPI('tandaiAlfaMassal', { token: TOKEN, tanggal, kelas });
-                if (res.success) {
-                    showToast(`${res.jumlah} Siswa ditandai Alfa.`, 'success');
-                    loadSiswaBelumAbsen();
-                } else {
-                    showToast('Gagal: ' + res.message, 'error');
-                }
-            } catch (err) {
-                showToast('Error memproses data massal.', 'error');
-            }
-        }
-    });
-}
-
-// ===============================================
-// 7. PENGATURAN (SETTINGS)
-// ===============================================
-async function bukaSetting() {
-    try {
-        const res = await fetchAPI('getSetting', { token: TOKEN });
-        if (res.success) {
-            sheetPengaturan = res;
-            document.getElementById('namaSekolah').value = res.namaSekolah;
-            document.getElementById('npsn').value = res.npsn;
-            document.getElementById('kepalaSekolah').value = res.kepalaSekolah;
-            document.getElementById('nip').value = res.nip;
-            document.getElementById('batasTelat').value = res.batasTelat;
-            
-            document.getElementById('tnamaSekolah').textContent = res.namaSekolah;
-            document.getElementById('tnpsn').textContent = res.npsn;
-            document.getElementById('tkepalaSekolah').textContent = res.kepalaSekolah;
-            document.getElementById('tnip').textContent = res.nip;
-        }
-    } catch (err) {
-        console.error("Gagal load pengaturan", err);
-    }
-}
-
-async function simpanSetting() {
-    const data = {
-        namaSekolah: document.getElementById('namaSekolah').value.trim(),
-        npsn: document.getElementById('npsn').value.trim(),
-        kepalaSekolah: document.getElementById('kepalaSekolah').value.trim(),
-        nip: document.getElementById('nip').value.trim(),
-        batasTelat: document.getElementById('batasTelat').value.trim()
-    };
-
-    if (!data.namaSekolah || !data.npsn || !data.kepalaSekolah || !data.nip || !data.batasTelat) {
-        showToast('Isi bagian yang masih kosong!', 'error');
-        return;
-    }
-    
-    const btn = document.getElementById('btnSaveSetting');
-    btn.textContent = "Menyimpan...";
-    
-    try {
-        const res = await fetchAPI('updateSetting', { token: TOKEN, data: data });
-        if (res.success) {
-            showToast('Pengaturan Tersimpan!', 'success');
-            bukaSetting(); // refresh
-        } else {
-            showToast('Gagal: ' + res.message, 'error');
-        }
-    } catch (err) {
-        showToast('Terjadi kesalahan koneksi.', 'error');
-    }
-    btn.textContent = "Simpan Pengaturan";
-}
-
-// ===============================================
-// 8. DATA ABSENSI & REKAP
-// ===============================================
-async function loadDaftarKelas() {
-    try {
-        const res = await fetchAPI('getDaftarKelas', {});
-        if (!res.success) return;
-        const selects = ['filter-kelas', 'filterManual', 'kelas'];
-        selects.forEach(id => {
-            const el = document.getElementById(id);
-            if(el) {
-                el.innerHTML = '<option value="">Semua Kelas</option>';
-                res.data.forEach(k => el.innerHTML += `<option value="${k}">Kelas ${k}</option>`);
-            }
-        });
-    } catch (err) { console.error("Gagal load daftar kelas", err); }
-}
-
-async function loadJumlahStatus() {
-    const today = new Date().toISOString().split('T')[0];
-    try {
-        const res = await fetchAPI('getJumlahStatusTanggal', { token: TOKEN, tanggal: today, kelas: "" });
-        if(res.success && res.data) {
-            document.getElementById('jumlahHadir').textContent = res.data.hadir || 0;
-            document.getElementById('jumlahTerlambat').textContent = res.data.terlambat || 0;
-            document.getElementById('jumlahSakit').textContent = res.data.sakit || 0;
-            document.getElementById('jumlahIzin').textContent = res.data.izin || 0;
-            document.getElementById('jumlahAlfa').textContent = res.data.alfa || 0;
-        }
-    } catch (err) {}
-}
-
-async function loadAbsensi() {
-    const kelas = document.getElementById('kelas').value;
-    const filter = document.getElementById('filter').value;
-    let params = {};
-
-    if (filter === 'harian' || filter === 'mingguan') {
-        params.tanggal = document.getElementById('tanggal').value;
-        if (!params.tanggal) return showToast('Pilih tanggal!', 'warning');
-    }
-    if (filter === 'bulanan') {
-        params.bulan = document.getElementById('bulan').value;
-        params.tahun = document.getElementById('tahun').value;
-    }
-    if (filter === 'tahunan') {
-        params.tahun = document.getElementById('tahun').value;
-    }
-
-    const container = document.getElementById('hasilAbsensi');
-    container.innerHTML = '<div class="text-center p-4"><i class="ph ph-spinner animate-spin"></i> Memuat data...</div>';
-
-    try {
-        const res = await fetchAPI('getDataAbsensi', { token: TOKEN, kelas, filter, params });
-        tampilkanAbsensi(res);
-    } catch (err) {
-        container.innerHTML = `<div class="p-4 bg-red-100 text-red-700 rounded-lg">Error: ${err.message}</div>`;
-    }
-}
-
-// ===============================================
-// (Sisa UI Script - UI interaktif)
-// ===============================================
-function showToast(message, type = 'success') {
-    const container = document.getElementById('toast-message');
-    const toast = document.createElement('div');
-    let bgColor = type === 'error' ? 'bg-red-900' : (type === 'info' ? 'bg-blue-900' : 'bg-green-900');
-    let icon = type === 'error' ? 'ph-x-circle text-red-400' : (type === 'info' ? 'ph-info text-blue-400' : 'ph-check-circle text-green-400');
-    
-    toast.className = `w-80 fixed bottom-5 right-5 ${bgColor} text-white px-5 py-3 rounded-lg shadow-lg transform transition-all duration-300 z-[9999] flex items-center opacity-100`;
-    toast.innerHTML = `<i class="mr-3 text-2xl ph-fill ${icon}"></i> <span class="text-sm font-medium">${message}</span>`;
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// ... [Fungsi Render UI (TabelSiswa, showAlert, html2pdf, ChartJS dll) tetap DIBIARKAN SAMA PERSIS karena murni UI manipulation] ...
-// Karena fungsi tersebut terlalu panjang dan tidak berinteraksi langsung dengan API,
-// Anda hanya perlu menyalin fungsi UI yang persis sama seperti kode HTML lama Anda.
-// Fungsi inti yang saya modifikasi di atas sudah mencakup SEMUA request data ke Google Sheets.
-</script>
-
-<!-- Script UI Standar (Tab, Sidebar, Pagination, Tabel, PDF, Chart JS dll) -->
-<script>
-    const tabs = document.querySelectorAll('[role="tab"]');
-    const tabPanels = document.querySelectorAll('[role="tabpanel"]');
-    const headerTitle = document.getElementById('header-title');
-
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => {
-                t.setAttribute('aria-selected', 'false');
-                t.classList.remove('bg-green-800', 'text-white', 'border-green-400', 'shadow-sm');
-                t.classList.add('text-green-100', 'border-transparent');
-            });
-
-            tab.setAttribute('aria-selected', 'true');
-            tab.classList.remove('text-green-100', 'border-transparent');
-            tab.classList.add('bg-green-800', 'text-white', 'border-green-400', 'shadow-sm');
-
-            headerTitle.textContent = tab.innerText.trim();
-
-            tabPanels.forEach(panel => panel.classList.add('hidden'));
-            const targetPanelId = tab.getAttribute('aria-controls');
-            const targetPanel = document.getElementById(targetPanelId);
-            
-            if (targetPanel) {
-                targetPanel.classList.remove('hidden');
-                sessionStorage.setItem('activeTab', targetPanelId);
-                targetPanel.style.opacity = '0';
-                targetPanel.style.transform = 'translateY(10px)';
-                setTimeout(() => {
-                    targetPanel.style.transition = 'all 0.3s ease-out';
-                    targetPanel.style.opacity = '1';
-                    targetPanel.style.transform = 'translateY(0)';
-                }, 10);
-            }
-
-            if (window.innerWidth < 768) {
-                const sidebar = document.getElementById('sidebar');
-                if (!sidebar.classList.contains('hidden')) toggleSidebar();
-            }
-        });
-    });
-
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('mobile-overlay');
-        if (sidebar.classList.contains('hidden')) {
-            sidebar.classList.remove('hidden');
-            sidebar.classList.add('flex', 'fixed', 'inset-y-0', 'left-0', 'z-40');
-            overlay.classList.remove('hidden');
-        } else {
-            sidebar.classList.add('hidden');
-            sidebar.classList.remove('flex', 'fixed', 'inset-y-0', 'left-0', 'z-40');
-            overlay.classList.add('hidden');
-        }
-    }
-
-    // Modal helpers (Tutup Logout)
-    function showLogoutConfirm() {
-        const m = document.getElementById('logout-confirm');
-        m.classList.remove('hidden', 'opacity-0');
-        m.classList.add('flex', 'opacity-100');
-    }
-    function hideLogoutConfirm() {
-        const m = document.getElementById('logout-confirm');
-        m.classList.add('hidden');
-        m.classList.remove('flex');
-    }
-
-    // Alert Dialog Helper
-    function showAlert(conf) {
-        document.getElementById('alertTitle').innerHTML = conf.title;
-        document.getElementById('alertMessage').innerHTML = conf.message;
-        const box = document.getElementById('alertModal');
-        box.classList.remove('hidden');
-        box.classList.add('flex');
-        
-        document.getElementById('alertOk').onclick = () => {
-            box.classList.add('hidden');
-            if(conf.onOk) conf.onOk();
-        }
-        const cancelBtn = document.getElementById('alertCancel');
-        if(conf.showCancel) {
-            cancelBtn.classList.remove('hidden');
-            cancelBtn.onclick = () => {
-                box.classList.add('hidden');
-                if(conf.onCancel) conf.onCancel();
-            }
-        } else {
-            cancelBtn.classList.add('hidden');
-        }
-    }
-    function closeAlert() { document.getElementById('alertModal').classList.add('hidden'); }
-
-    // Salin seluruh script fungsi render Chart.js, Render DataTables, dan html2pdf yang ada di kode lama ke sini
-    // (Fungsi renderTabelSiswa, renderChartJumlahSiswa, dll berfungsi identik dengan sebelumnya).
-</script>
-<!-- [Sisa dari script logic tabel dan chart bawaan dari kode Anda disematkan di sini (tanpa diubah)] -->
+    <!-- Load Eksternal Javascript File -->
+    <script src="app.js"></script>
 </body>
 </html>
