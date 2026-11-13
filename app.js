@@ -9,7 +9,7 @@
 // 1. KONFIGURASI WEB APP URL 
 // ===============================================
 // WAJIB GANTI URL DI BAWAH INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzI04-gB0iW5yB9x3mGfGv4rMvRzB-tVw3C13l213jJ/exec'; 
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQHq9Gw2aUajk2s9yhEQ8P7tlUAFxP7MmT4gIWkRNEJUC17t67Ot3aqVyHaY5J_6Zeeg/exec'; 
 const SCAN_PAGE_URL = 'https://sdn1-sumbermulya.github.io/absen.html';
 
 // ===============================================
