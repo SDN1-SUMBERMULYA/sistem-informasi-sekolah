@@ -722,6 +722,7 @@ async function getSemuaSiswa(kelas, callback) {
         }
     } catch(err) {
         showToast('Terjadi kesalahan saat memuat data siswa.', 'error');
+        console.log(err);
     }
 }
 
