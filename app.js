@@ -140,7 +140,7 @@ function showApp(nama, role) {
         //loadSiswaBelumAbsen();
     });
     bukaSetting();
-    //loadJumlahStatus();
+    loadJumlahStatus();
 
     document.getElementById('loader').classList.add('hidden');
     
@@ -431,6 +431,23 @@ function openScanPage() {
 // ===============================================
 // 7. PENGATURAN LOGIC
 // ===============================================
+async function loadJumlahStatus() {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const res = await fetchAPI('getJumlahStatusTanggal', { token: TOKEN, today: today });
+        if (res.success) {
+            const data = res.data;
+            console.log(data);
+            document.getElementById('jumlahHadir').textContent = data.hadir;
+            document.getElementById('jumlahTerlambat').textContent = data.terlambat;
+            document.getElementById('jumlahSakit').textContent = data.sakit;
+            document.getElementById('jumlahIzin').textContent = data.izin;
+            document.getElementById('jumlahAlfa').textContent = data.alfa;
+        }
+    } catch (err) {
+        console.error("Gagal load pengaturan", err);
+    }
+}
 async function bukaSetting() {
     try {
         const res = await fetchAPI('getSetting', { token: TOKEN });
