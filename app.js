@@ -137,7 +137,7 @@ function showApp(nama, role) {
     // Jalankan pengambilan data inti berurutan
     getSemuaSiswa('', () => {
         loadDaftarKelas();
-        //loadSiswaBelumAbsen();
+        loadSiswaBelumAbsen();
     });
     bukaSetting();
     loadJumlahStatus();
@@ -428,6 +428,21 @@ function openScanPage() {
     if (!scanner) showAlert({ type: 'warning', title: 'Popup Diblokir', message: 'Browser memblokir tab baru. Izinkan pop-up terlebih dahulu.' });
 }
 
+  // ------------------- KEHADIRAN MANUAL (Sakit/Izin/Alfa) -------------------
+  async function loadSiswaBelumAbsen() {
+    try {
+        const kelas = document.getElementById('filterManual').value;
+        const tanggal = document.getElementById('manual-tanggal').value;
+        const res = await fetchAPI('getSiswaBelumAbsen', { token: TOKEN, tanggal: tanggal, kelas: kelas });
+        if (res.success) {
+            const jumlahBelumAbsen = res.data.length;
+            renderManualTable(res.data, tanggal);
+            updateChartAbsensi(jumlahTotalSiswa,jumlahBelumAbsen);
+        }
+    } catch (err) {
+        console.error("Terjadi Kesalahan", err);
+    }
+  }
 // ===============================================
 // 7. PENGATURAN LOGIC
 // ===============================================
