@@ -438,6 +438,8 @@ function openScanPage() {
             const jumlahBelumAbsen = res.data.length;
             renderManualTable(res.data, tanggal);
             updateChartAbsensi(jumlahTotalSiswa,jumlahBelumAbsen);
+        } else {
+            console.error("Terjadi Kesalahan BelumAbsen");
         }
     } catch (err) {
         console.error("Terjadi Kesalahan", err);
@@ -458,6 +460,8 @@ async function loadJumlahStatus() {
             document.getElementById('jumlahSakit').textContent = data.sakit;
             document.getElementById('jumlahIzin').textContent = data.izin;
             document.getElementById('jumlahAlfa').textContent = data.alfa;
+        } else {
+            console.error("Gagal load JumlahStatus");
         }
     } catch (err) {
         console.error("Gagal load pengaturan", err);
@@ -478,6 +482,8 @@ async function bukaSetting() {
             document.getElementById('tnpsn').textContent = res.npsn || '-';
             document.getElementById('tkepalaSekolah').textContent = res.kepalaSekolah || '-';
             document.getElementById('tnip').textContent = res.nip || '-';
+        } else {
+            console.error("Gagal load Setting");
         }
     } catch (err) {
         console.error("Gagal load pengaturan", err);
