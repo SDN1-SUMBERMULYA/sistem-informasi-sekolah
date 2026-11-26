@@ -15,20 +15,59 @@ const SCAN_PAGE_URL = 'https://sdn1-sumbermulya.github.io/absen.html';
 // ===============================================
 // 2. FUNGSI FETCH (PENGGANTI google.script.run)
 // ===============================================
-async function fetchAPI(action, payload = {}) {
-    try {
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            // Gunakan text/plain untuk menghindari error preflight CORS di browser
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: action, data: payload })
+// async function fetchAPI(action, payload = {}) {
+//     try {
+//         const response = await fetch(SCRIPT_URL, {
+//             method: 'POST',
+//             // Gunakan text/plain untuk menghindari error preflight CORS di browser
+//             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+//             body: JSON.stringify({ action: action, data: payload })
+//         });
+//         const result = await response.json();
+//         return result;
+//     } catch (error) {
+//         console.error("API Error:", error);
+//         throw new Error('Gagal menghubungi server. Periksa koneksi internet Anda.');
+//     }
+// }
+
+async function fetchAPI(action, data = {}) {
+    return new Promise((resolve, reject) => {
+        const callbackName = 'gasCallback_' + Date.now() + '_' +
+            Math.random().toString(36).substring(2, 8);
+
+        const params = new URLSearchParams({
+            action: action,
+            data: JSON.stringify(data),
+            callback: callbackName
         });
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error("API Error:", error);
-        throw new Error('Gagal menghubungi server. Periksa koneksi internet Anda.');
-    }
+
+        const script = document.createElement('script');
+        script.src = `${API_URL}?${params.toString()}`;
+
+        const timeout = setTimeout(() => {
+            cleanup();
+            reject(new Error('Request timeout dari server GAS'));
+        }, 30000);
+
+        function cleanup() {
+            clearTimeout(timeout);
+            delete window[callbackName];
+            script.remove();
+        }
+
+        window[callbackName] = function(response) {
+            cleanup();
+            resolve(response);
+        };
+
+        script.onerror = function() {
+            cleanup();
+            reject(new Error('Gagal menghubungi server GAS'));
+        };
+
+        document.body.appendChild(script);
+    });
 }
 
 // ===============================================
