@@ -1006,7 +1006,7 @@ async function konfirmasiAlfaMassal() {
       cancelText: "Batal",
       showCancel: true,
 
-      onOk: function () {
+      onOk: async function () {
         try {
             const res = await fetchAPI('tandaiAlfaMassal', {token:TOKEN, tanggal:tanggal, kelas:kelas});
             if (res.success) {
