@@ -977,8 +977,54 @@ async function loadDaftarKelas() {
                 res.data.forEach(k => select.innerHTML += `<option value="${k}">Kelas ${k}</option>`);
             }
         });
-    } catch (err) {}
+    } catch (err) {
+        console.error("Error loadKelas", err);
+    }
 }
+async function simpanStatusManual(siswaId, tanggal) {
+    try {
+        const status = document.getElementById('status-' + siswaId).value;
+        const res = await fetchAPI('setStatusManual', {token:TOKEN, siswaId:siswaId, tanggal:tanggal, status:status});
+        if (res.success) {
+          showToast('Data Tersimpan!', 'success');
+          loadSiswaBelumAbsen(); // refresh daftar (siswa yang sudah disimpan akan hilang dari daftar)
+        } else {
+          showToast(res.message, 'error');
+        }
+    } catch (err) {
+        console.error("Error simpanStatus", err);
+    }
+  }
+async function konfirmasiAlfaMassal() {
+    const tanggal = document.getElementById('btnAlfa').dataset.tanggal;
+    const kelas = document.getElementById('filterManual').value;
+    showAlert({
+      type: "question",
+      title: "Tandai Semua Sebagai Alfa?",
+      message: 'Tandai semua siswa kelas <b>'+kelas+'</b> yang belum absen di tanggal <b>' + tanggal + '</b> sebagai ALFA?<br>Tindakan ini tidak bisa dibatalkan otomatis.',
+      okText: "Ya",
+      cancelText: "Batal",
+      showCancel: true,
+
+      onOk: function () {
+        try {
+            const res = await fetchAPI('tandaiAlfaMassal', {token:TOKEN, tanggal:tanggal, kelas:kelas});
+            if (res.success) {
+              showToast(res.jumlah + ' Siswa ditandai Alfa.', 'success');
+              loadSiswaBelumAbsen(); // refresh daftar (siswa yang sudah disimpan akan hilang dari daftar)
+            } else {
+              showToast('Terjadi kesalahan : ' + res.message, 'error');
+            }
+        } catch (err) {
+            console.error("Error tandai AlfaMassal", err);
+        }
+      },
+
+      onCancel: function () {
+        // console.log("dibatalkan");
+      }
+    });
+  }
 
 document.getElementById('btnfilter').addEventListener('click', async function() {
     const kelas = document.getElementById('filterManual').value.trim();
