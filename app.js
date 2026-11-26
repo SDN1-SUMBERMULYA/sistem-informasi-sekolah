@@ -43,7 +43,7 @@ async function fetchAPI(action, data = {}) {
         });
 
         const script = document.createElement('script');
-        script.src = `${API_URL}?${params.toString()}`;
+        script.src = `${SCRIPT_URL}?${params.toString()}`;
 
         const timeout = setTimeout(() => {
             cleanup();
